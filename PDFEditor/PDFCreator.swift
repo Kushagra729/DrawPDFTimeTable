@@ -31,7 +31,7 @@ class PDFCreator: NSObject {
             ActivityModel(day: "Tuesday", activities: [LecturesModel(name: "Math", startTime: "08:00 AM", endTime:  "09:00 AM", hrs: 1, isLecture: 1),
                                                        LecturesModel(name: "Science", startTime: "09:00 AM", endTime:  "10:00 AM", hrs: 1, isLecture: 1),
                                                        LecturesModel(name: "B", startTime: "12:00 PM", endTime:  "01:00 PM", hrs: 1, isLecture: 1),
-                                                       LecturesModel(name: "Lunch", startTime: "02:00 PM", endTime:  "03:00 PM", hrs: 2, isLecture: 0)]),
+                                                       LecturesModel(name: "Lunch", startTime: "02:00 PM", endTime:  "02:45 PM", hrs: 2, isLecture: 0)]),
             ActivityModel(day: "Wednesday", activities: [LecturesModel(name: "Math", startTime: "08:00 AM", endTime:  "09:00 AM", hrs: 1, isLecture: 1),
                                                          LecturesModel(name: "A", startTime: "09:00 AM", endTime:  "10:00 AM", hrs: 1, isLecture: 1),
                                                          LecturesModel(name: "B", startTime: "11:00 AM", endTime:  "02:00 PM", hrs: 1, isLecture: 1),
