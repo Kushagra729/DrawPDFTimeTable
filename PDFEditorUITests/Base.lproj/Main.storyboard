@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="4SD-9i-shm">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Preview View Controller-->
+        <scene sceneID="XA8-dG-8fV">
+            <objects>
+                <viewController storyboardIdentifier="PDFPreviewViewController" id="8le-0e-C2H" customClass="PDFPreviewViewController" customModule="PDFEditor" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="NYf-tN-lf7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uej-Nu-TMu" customClass="PDFView">
+                                <rect key="frame" x="16" y="88" width="382" height="774"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="l8E-NX-4Yc"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="uej-Nu-TMu" firstAttribute="bottom" secondItem="l8E-NX-4Yc" secondAttribute="bottom" id="CMW-ld-8io"/>
+                            <constraint firstItem="uej-Nu-TMu" firstAttribute="top" secondItem="l8E-NX-4Yc" secondAttribute="top" id="bYX-Ed-irO"/>
+                            <constraint firstItem="uej-Nu-TMu" firstAttribute="leading" secondItem="l8E-NX-4Yc" secondAttribute="leading" constant="16" id="dju-c9-p8C"/>
+                            <constraint firstItem="l8E-NX-4Yc" firstAttribute="trailing" secondItem="uej-Nu-TMu" secondAttribute="trailing" constant="16" id="gwu-cn-V2q"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="LFE-Eb-yzh"/>
+                    <connections>
+                        <outlet property="pdfView" destination="uej-Nu-TMu" id="XLI-H2-iCD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2kG-eC-oyL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2712.8000000000002" y="101.19940029985008"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="dca-Or-S8l">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="4SD-9i-shm" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="os4-YS-GVG"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="d0E-aF-W9i">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="8le-0e-C2H" kind="relationship" relationship="rootViewController" id="FHt-MC-LxC"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fp0-zW-KZ8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2018" y="101"/>
+        </scene>
+    </scenes>
+</document>
