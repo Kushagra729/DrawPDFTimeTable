@@ -16,7 +16,7 @@ class PDFManager: NSObject{
     var rects = [CGRect]()
     override init(){}
     
-    func showTemplate(arrayWeekDays: [ActivityModel], pageRect: CGRect, context: CGContext){
+    func showTemplate(arrayWeekDays: [LecturesModel], pageRect: CGRect, context: CGContext){
         addRow(y: 40, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
         addColumn(x: 150, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
         addWeekName(arrayWeekDays: arrayWeekDays, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 7, context: context)
@@ -27,11 +27,11 @@ class PDFManager: NSObject{
         context.restoreGState()
     }
     
-    func addWeekName(arrayWeekDays: [ActivityModel], _ drawContext: CGContext, pageRect: CGRect,
+    func addWeekName(arrayWeekDays: [LecturesModel], _ drawContext: CGContext, pageRect: CGRect,
                      tearOffY: CGFloat, numberTabs: Int, context: CGContext){
         var estimatedWeekNameY = 60.0
         for index in 0..<arrayWeekDays.count {
-            _ = addUILabel(title: arrayWeekDays[index].day, x: 20, y: estimatedWeekNameY-3)
+            _ = addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: estimatedWeekNameY-3)
             addRow(y: Int(estimatedWeekNameY + 40.0), context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
             estimatedWeekNameY += 60
         }
@@ -139,7 +139,7 @@ class PDFManager: NSObject{
     // MARK: Draw rectangles
     // Number of rectangles in a day
     
-    func numOfRect(arrayHeaderTime: [String],schTimesArry:[ActivityModel],context : CGContext) {
+    func numOfRect(arrayHeaderTime: [String],schTimesArry:[LecturesModel],context : CGContext) {
         let numOfRects = schTimesArry.count
         var startTime = ""
         var endTime = ""
@@ -148,16 +148,18 @@ class PDFManager: NSObject{
         print(numOfRects)
         print(schTimesArry)
         for days in schTimesArry {
-            print(days.activities)
+            print(days.classes)
             count += 1
-            for _activity in days.activities {
-                print(_activity)
-                startTime = _activity.startTime
-                endTime = _activity.endTime
-                y = 60 + Double((count * 60))
-                let combineHours = findDateDiff(time1Str: startTime, time2Str: endTime)
-                print(combineHours)
-                drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.name, y: y, isLecture: _activity.isLecture, context: context)
+         if let dayClass =  days.classes {
+                for _activity in dayClass {
+                    print(_activity)
+                    startTime = _activity.slot_from ?? ""
+                    endTime = _activity.slot_to ?? ""
+                    y = 60 + Double((count * 60))
+                    let combineHours = findDateDiff(time1Str: startTime, time2Str: endTime)
+                    print(combineHours)
+                    drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: y, isLecture: _activity.activity_type ?? 1, context: context)
+                }
             }
         }
         context.addRects(rects)
