@@ -150,13 +150,13 @@ class PDFManager: NSObject{
         for days in schTimesArry {
             print(days.classes)
             count += 1
-         if let dayClass =  days.classes {
+            if let dayClass =  days.classes {
                 for _activity in dayClass {
                     print(_activity)
                     startTime = _activity.slot_from ?? ""
                     endTime = _activity.slot_to ?? ""
                     y = 60 + Double((count * 60))
-                    let combineHours = findDateDiff(time1Str: startTime, time2Str: endTime)
+                    let combineHours = findTimeDiff(time1Str: startTime, time2Str: endTime)
                     print(combineHours)
                     drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: y, isLecture: _activity.activity_type ?? 1, context: context)
                 }
@@ -167,22 +167,35 @@ class PDFManager: NSObject{
     
     // Difference between dates
     
-    func findDateDiff(time1Str: String, time2Str: String) -> Int {
+    func findTimeDiff(time1Str: String, time2Str: String) -> Int {
         let timeformatter = DateFormatter()
         timeformatter.dateFormat = "hh:mm a"
         guard let time1 = timeformatter.date(from: time1Str),
-              //            let time2 = timeformatter.date(from: time2Str) else { return "" }
               let time2 = timeformatter.date(from: time2Str) else { return 0 }
         //You can directly use from here if you have two dates
         let interval = time2.timeIntervalSince(time1)
-//        let hour = interval / 3600;
-        //        let minute = interval.truncatingRemainder(dividingBy: 3600) / 60
         let minute = interval / 60
         print(minute)
-        //        let intervalInt = Int(interval)
-        //        return "\(intervalInt < 0 ? "-" : "+") \(Int(hour)) Hours \(Int(minute)) Minutes"
         return Int(minute)
     }
+    
+    func _timeRange(from: Date, to: Date) -> [String] {
+        // in case of the "from" date is more than "to" date,
+        // it should returns an empty array:
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "hh:mm a"
+        if from > to { return [String]() }
+        var tempDate = from
+        var array = [tempDate]
+        var strArray = [String]()
+        while tempDate < to {
+            tempDate = Calendar.current.date(byAdding: .hour, value: 1, to: tempDate)!
+            array.append(tempDate)
+            strArray.append(dateFormatter.string(from: tempDate))
+        }
+        return strArray
+    }
+    
     
     // Drawing the rectangles
     
@@ -192,7 +205,13 @@ class PDFManager: NSObject{
         var count = -1
         for i in arrayHeaderTime{
             count += 1
-            if i == startTime {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "HH:mm:ss"
+            let fullDate = dateFormatter.date(from: startTime)
+            dateFormatter.dateFormat = "hh:mm a"
+            let time2 = dateFormatter.string(from: fullDate!)
+
+            if i == time2 {
                 print(i)
                 rectX = 150 + (count * 120)
                 let rect = addRect(x:CGFloat(rectX), y: y, context, rectWidth: rectWidth, isLecture: isLecture)

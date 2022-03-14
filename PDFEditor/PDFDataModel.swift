@@ -20,6 +20,18 @@ class PdfRawDataModel :Mappable{
         lectures <- map["lectures"]
     }
     
+    class func pdfMethod(response:((_ success:PdfRawDataModel?, _ errMsg:String, _ erorCode:Int)->Void)!) {
+        
+        let url = "http://c4d.kitlabs.us/api/view_schedule"
+        PDFWebService.sendRequest(urlPath: url, type: .get, parms: nil ,success: { (responseObject) in
+            print(responseObject)
+            let user = Mapper<PdfRawDataModel>().map(JSON: responseObject)
+            response(user, "", 200)
+            
+        }){ (errorMessage, status) in
+            response(nil, errorMessage, status)
+        }
+    }
 }
 
 class Timings: Mappable{
@@ -45,7 +57,6 @@ class LecturesModel :Mappable{
         day <- map["day"]
         classes <- map["classes"]
     }
-    
 }
 
 class ClassesModel :Mappable{
@@ -66,21 +77,5 @@ class ClassesModel :Mappable{
     }
     
     
-    class func pdfMethod(response:((_ success:[PdfRawDataModel]?, _ errMsg:String, _ erorCode:Int)->Void)!) {
-        
-        let url = "http://c4d.kitlabs.us/api/view_schedule"
-        PDFWebService.sendRequest(urlPath: url, type: .get, parms: nil ,success: { (responseObject) in
-            print(responseObject)
-            if let data = responseObject["lectures"] as? [[String:Any]]{
-                var dataModel = [PdfRawDataModel]()
-                for item in data{
-                    let user = Mapper<PdfRawDataModel>().map(JSON: item)
-                    dataModel.append(user!)
-                }
-                response(dataModel, "", 0)
-            }
-        }){ (errorMessage, status) in
-            response(nil, errorMessage, status)
-        }
-    }
+
 }

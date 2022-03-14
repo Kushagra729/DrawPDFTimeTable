@@ -9,27 +9,25 @@ import UIKit
 import PDFKit
 
 class PDFPreviewViewController: UIViewController {
-  public var documentData: Data?
-  @IBOutlet weak var pdfView: PDFView!
-    var pdfEditor : [PdfRawDataModel]?
+    public var documentData: Data?
+    public var pdfCreator = PDFCreator()
+    @IBOutlet weak var pdfView: PDFView!
+    
     
     override func viewDidLoad() {
-    super.viewDidLoad()
-      let pdfCreator = PDFCreator(title: "iOS Developer", body: "Software Developer",
-                                  image: UIImage(named: "logo")!, contact: "contact")
-      fireAPI()
-      documentData = pdfCreator.createFlyer()
-    
-    if let data = documentData {
-      pdfView.document = PDFDocument(data: data)
-      pdfView.autoScales = true
+        super.viewDidLoad()
+        fireAPI()
+        
     }
-  }
+    
     func fireAPI(){
-        ClassesModel.pdfMethod { [self] success, errMsg, erorCode in
+        PdfRawDataModel.pdfMethod { [self] success, errMsg, erorCode in
             if let success = success {
-                pdfEditor = success
-                print(pdfEditor)
+                documentData = pdfCreator.createFlyer(pdfeditor: success)
+                if let data = documentData {
+                    pdfView.document = PDFDocument(data: data)
+                    pdfView.autoScales = true
+                }
             }else{
                 print(errMsg)
                 print(erorCode)
