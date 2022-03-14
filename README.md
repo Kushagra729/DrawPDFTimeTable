@@ -7,4 +7,4 @@ Draw Week Time Table on PDF using PDFKit in iOS Swift.
 # Info 
 This is the pdf of time table drawn using PDFKit in iOS Swift with dynamic abililties , coder can able to add and remove days and time and the pdf will shrink and expand itself. The Rectangles where based on minutes of the time.
 # How to Use 
-Simply add it to your Xcode and play with it.
+Unzip the PDFEditorCompleted file .
