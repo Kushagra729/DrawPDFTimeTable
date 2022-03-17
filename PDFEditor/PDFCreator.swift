@@ -35,7 +35,7 @@ class PDFCreator: NSObject {
 //                        return
 //                    }
                     
-// Horrizontal Days
+// Horrizontal Template
                     PDFManager.shared.showTemplate(arrayWeekDays: lecturesArray , pageRect: pageRect, context: context)
 // Vertical times
                     PDFManager.shared.showHeaderTime(arrayHeaderTime: timeArray, pageRect: pageRect, context: context)

@@ -87,7 +87,7 @@ class RequestRetryHandler : RequestAdapter, RequestRetrier {
         headers = [
             "Content-Type" : "application/json"
         ]
-        headers["Authorization"] = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiM2U2NTVjMDEyMWU0M2E3OTgzYWU5ZDY4NWY3NmMzNDdiOTRlOWUzMGMyZTJjNDA5NjE5ZmIxN2Y5MDUwNWI2MWI2Y2JiNWRkMTJhODRhOWUiLCJpYXQiOjE2NDc1MTk3MTQsIm5iZiI6MTY0NzUxOTcxNCwiZXhwIjoxNjc5MDU1NzE0LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.fI8eb27MyiuJdIUdpi-Ls8WDtdicGMj1lNKij_T69_Bwx_pr6pxa6xQBYoeEsp8HXhnSUZDFW9vpq0A7v4ofk8BpllLqXAWhawOYCtbEqHf7BKB3nDxDUHSv03DctS6ZzkZ2dICfK57LRvFF010-uFSylXTv5Vw1yroLIybN2L08A0GZ70_zpxOeyIBkW4nawOCBu8UKGA3PImA_9WhK0ASa-cvBXaSVmqapyfLXSngKmr_2lEV_-6O8ZCMHSUF17jyM21oG3I-hLV9zCa1t0kzU9iMbB_1PUW8ABdEDDExL6PEJ_h_Mx_-dMXPomNNVTLU131OhEh327x_cYfNsu8cOeB7AaE3i6HCbntYhDVAvFxDch7AFfWTtOo9anUikmZuOw0EmWIIe28b3oQOxNyFQOHdY_6Sh_7rzNZwt2EW2KCZc-XMI_Qp4yPm_ny6n_OR-3zZyCJcDXSZRAic0nXzfe4WOEaPc4JpDrWdjLWJfOSzVD2rX0bdMo_hbnjR8U2dbVwngKmw_IBZPQxDzx1c6cZQFxhNonq60fDYQFXNNZzoxtS2WxUNk9xOH_QEc-hanDqB4alDq5EsJzwUZHirauRNwyihaWn9zpMhRQs9Frb-GseLECg0Tu6KYcTDJzu3nutXXXsQUXKDVBgp78iKD-IgXklGmOvHJw8jSSiE"
+        headers["Authorization"] = "Bearer "
         
         return headers
     }

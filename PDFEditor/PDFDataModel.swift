@@ -22,7 +22,7 @@ class PdfRawDataModel :Mappable{
     
     class func pdfMethod(response:((_ success:PdfRawDataModel?, _ errMsg:String, _ erorCode:Int)->Void)!) {
         
-        let url = "http://c4d.kitlabs.us/api/view_schedule"
+        let url = ""
         PDFWebService.sendRequest(urlPath: url, type: .get, parms: nil ,success: { (responseObject) in
             print(responseObject)
             let user = Mapper<PdfRawDataModel>().map(JSON: responseObject)
