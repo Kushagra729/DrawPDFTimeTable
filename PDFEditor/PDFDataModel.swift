@@ -22,7 +22,7 @@ class PdfRawDataModel :Mappable{
     
     class func pdfMethod(response:((_ success:PdfRawDataModel?, _ errMsg:String, _ erorCode:Int)->Void)!) {
         
-        let url = ""
+        let url = "http://c4d.kitlabs.us/api/view_schedule"
         PDFWebService.sendRequest(urlPath: url, type: .get, parms: nil ,success: { (responseObject) in
             print(responseObject)
             let user = Mapper<PdfRawDataModel>().map(JSON: responseObject)
@@ -75,9 +75,6 @@ class ClassesModel :Mappable{
         slot_to <- map["slot_to"]
         activity_type <- map["activity_type"]
     }
-    
-    
-
 }
 
 //import Foundation

@@ -17,7 +17,6 @@ class PDFPreviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         fireAPI()
-        
     }
     
     func fireAPI(){

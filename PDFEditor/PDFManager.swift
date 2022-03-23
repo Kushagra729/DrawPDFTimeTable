@@ -9,6 +9,11 @@ import Foundation
 import UIKit
 import PDFKit
 
+let cellHeight = 80
+let maxChar = 30
+let minChar = 7
+let midChar = 14
+
 class PDFManager: NSObject{
     static let shared = PDFManager()
     var pageWidth = 800
@@ -41,11 +46,11 @@ class PDFManager: NSObject{
     
     func addWeekName(arrayWeekDays: [LecturesModel], _ drawContext: CGContext, pageRect: CGRect,
                      tearOffY: CGFloat, numberTabs: Int, context: CGContext){
-        var estimatedWeekNameY = 60.0
+        var estimatedWeekNameY = cellHeight
         for index in 0..<arrayWeekDays.count {
-            _ = addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: estimatedWeekNameY-3)
-            addRow(y: Int(estimatedWeekNameY + 40.0), context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
-            estimatedWeekNameY += 60
+            _ = addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: CGFloat(estimatedWeekNameY-6))
+            addRow(y: Int(Double(estimatedWeekNameY) + 40.0), context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
+            estimatedWeekNameY += cellHeight
         }
         drawContext.restoreGState()
     }
@@ -109,7 +114,7 @@ class PDFManager: NSObject{
     }
     
     func addRectUILabel(title: String, x: CGFloat, y: CGFloat ,rectWidth: CGFloat,isLecture :Int,context: CGContext) -> CGFloat {
-        let titleFont = UIFont.systemFont(ofSize: 20.0, weight: .regular)
+        let titleFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let titleAttributes: [NSAttributedString.Key: Any] =
@@ -118,9 +123,47 @@ class PDFManager: NSObject{
             NSAttributedString.Key.paragraphStyle: paragraphStyle
         ]
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
-        let titleStringRect = CGRect(x: x,
-                                     y: CGFloat(y), width: rectWidth,
-                                     height: 40)
+        
+        var titleStringRect = CGRect(x: x,
+                                     y: CGFloat(y + 10), width: rectWidth,
+                                     height: 100)
+        
+        let currentChar = title.count
+        
+        if rectWidth <= 60{
+            
+            if currentChar <= maxChar && currentChar >= midChar{
+                
+                titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y - 8), width: rectWidth,
+                                         height: 100)
+            }else if currentChar <= midChar && currentChar >= minChar{
+                
+                titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y + 5), width: rectWidth,
+                                         height: 100)
+            }else{
+                
+                titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y + 10), width: rectWidth,
+                                         height: 100)
+            }
+        }else {
+            if currentChar <= maxChar && currentChar >= midChar{
+                
+                titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y + 5), width: rectWidth,
+                                         height: 100)
+            }else if currentChar <= midChar && currentChar >= minChar{
+                
+                titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y + 10), width: rectWidth,
+                                         height: 100)
+            }else {
+                
+            }
+        }
+        
         attributedTitle.draw(in: titleStringRect)
         return titleStringRect.origin.y + titleStringRect.size.height
     }
@@ -128,14 +171,15 @@ class PDFManager: NSObject{
     func addRect(x: CGFloat,y: CGFloat, _ drawContext: CGContext,rectWidth: CGFloat,isLecture :Int) -> CGRect{
         let titleStringRect = CGRect(x: x,
                                      y: CGFloat(y - 20), width: rectWidth,
-                                     height: 60)
+                                     height: CGFloat(cellHeight))
         
         var bgColor : UIColor!
         let strokeColor : UIColor = .black
-        if isLecture == 0 {
+        if isLecture == 2 {
             bgColor = UIColor(red: 255/255, green: 127/255, blue: 0/255, alpha:0.4)
         }else {
-            bgColor = UIColor(red: 252/255, green: 7/255, blue: 139/255, alpha:0.4)
+         
+            bgColor = UIColor(red: 10/255, green: 121/255, blue: 191/255, alpha:1.0)
         }
         let bpath:UIBezierPath = UIBezierPath(rect: titleStringRect)
         UIColor.clear.setFill()
@@ -154,23 +198,24 @@ class PDFManager: NSObject{
         let numOfRects = schTimesArry.count
         var startTime = ""
         var endTime = ""
-        var y = 50.0
+        var y = 0
         var count = -1
         print(numOfRects)
         print(schTimesArry)
         for days in schTimesArry {
-            print(days.classes)
             count += 1
             if let dayClass =  days.classes {
                 for _activity in dayClass {
                     print(_activity)
                     startTime = _activity.slot_from ?? ""
                     endTime = _activity.slot_to ?? ""
-                    y = 60 + Double((count * 60))
+                    y = Int(Double(cellHeight) + Double((count * cellHeight))) - 20 //lecture cell top constraint
                     let combineHours = findTimeDiff(time1Str: startTime, time2Str: endTime)
                     print(combineHours)
                     if let activityName = _activity.activity_name {
-                        drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: y, isLecture: _activity.activity_type ?? 1, context: context)
+                        
+                        drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: CGFloat(y), isLecture: _activity.activity_type ?? 1, context: context)
+                        
                     }else {
                         
                     }
@@ -229,7 +274,7 @@ class PDFManager: NSObject{
                 break
             } else {
                 var diff = findTimeDiff(time1Str: i, time2Str: startTime)
-                        print(diff)
+                print(diff)
                 rectX = 150 + (diff*2) + (count * 120)
                 addLecture(rectX: rectX, y: y, rectWidth: rectWidth, isLecture: isLecture, className: className, context: context)
                 break
@@ -240,5 +285,5 @@ class PDFManager: NSObject{
     func addLecture(rectX: Int, y : CGFloat, rectWidth : CGFloat, isLecture: Int, className: String, context : CGContext ){
         let rect = addRect(x:CGFloat(rectX), y: y, context, rectWidth: rectWidth, isLecture: isLecture)
         self.rects.append(rect)
-        _ = addRectUILabel(title: className, x: CGFloat(rectX), y: y-3, rectWidth : rectWidth, isLecture : isLecture, context : context)
+        _ = addRectUILabel(title: className, x: CGFloat(rectX), y: y, rectWidth : rectWidth, isLecture : isLecture, context : context)
     }}
