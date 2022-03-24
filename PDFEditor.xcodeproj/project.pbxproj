@@ -22,6 +22,8 @@
 		969D439027AA65E800709F49 /* PDFCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969D438F27AA65E800709F49 /* PDFCreator.swift */; };
 		969D439227AA65F000709F49 /* PDFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969D439127AA65F000709F49 /* PDFManager.swift */; };
 		B1D294414EF61B60B0D4292A /* Pods_PDFEditor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D363932BAC4ECECEDE4F1CAF /* Pods_PDFEditor.framework */; };
+		F309D4E427EC932C005C1C86 /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = F309D4E327EC932C005C1C86 /* data.json */; };
+		F309D4E627EC9359005C1C86 /* KrecentITLabsAssignment (1).json in Resources */ = {isa = PBXBuildFile; fileRef = F309D4E527EC9359005C1C86 /* KrecentITLabsAssignment (1).json */; };
 		F36AF50327B23FAD0002C62B /* PDFDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AF50227B23FAD0002C62B /* PDFDataModel.swift */; };
 		F381A00427D9B5EB009A0BDC /* PDFWebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F381A00327D9B5EB009A0BDC /* PDFWebService.swift */; };
 /* End PBXBuildFile section */
@@ -68,6 +70,8 @@
 		969D439127AA65F000709F49 /* PDFManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFManager.swift; sourceTree = "<group>"; };
 		D363932BAC4ECECEDE4F1CAF /* Pods_PDFEditor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PDFEditor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F292E9C712CEE8984EF8EFB5 /* Pods-PDFEditorTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDFEditorTests.debug.xcconfig"; path = "Target Support Files/Pods-PDFEditorTests/Pods-PDFEditorTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F309D4E327EC932C005C1C86 /* data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
+		F309D4E527EC9359005C1C86 /* KrecentITLabsAssignment (1).json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "KrecentITLabsAssignment (1).json"; sourceTree = "<group>"; };
 		F36AF50227B23FAD0002C62B /* PDFDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFDataModel.swift; sourceTree = "<group>"; };
 		F381A00327D9B5EB009A0BDC /* PDFWebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFWebService.swift; sourceTree = "<group>"; };
 		F610F2023F3B3FBF0B95C23C /* Pods-PDFEditor-PDFEditorUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDFEditor-PDFEditorUITests.debug.xcconfig"; path = "Target Support Files/Pods-PDFEditor-PDFEditorUITests/Pods-PDFEditor-PDFEditorUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 				969D436A27AA65B700709F49 /* LaunchScreen.storyboard */,
 				969D436D27AA65B700709F49 /* Info.plist */,
 				969D436527AA65B400709F49 /* PDFEditor.xcdatamodeld */,
+				F309D4E527EC9359005C1C86 /* KrecentITLabsAssignment (1).json */,
+				F309D4E327EC932C005C1C86 /* data.json */,
 			);
 			path = PDFEditor;
 			sourceTree = "<group>";
@@ -294,6 +300,8 @@
 				969D436C27AA65B700709F49 /* LaunchScreen.storyboard in Resources */,
 				969D436927AA65B700709F49 /* Assets.xcassets in Resources */,
 				969D436427AA65B400709F49 /* Main.storyboard in Resources */,
+				F309D4E427EC932C005C1C86 /* data.json in Resources */,
+				F309D4E627EC9359005C1C86 /* KrecentITLabsAssignment (1).json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,42 +14,76 @@ let maxChar = 30
 let minChar = 7
 let midChar = 14
 
+//MARK: - Enum
+
+
+enum LineDirection {  // Enum for lines directions
+    case horizontal
+    case verticalAndHorizontal
+    case daysTimeVertical
+}
+
+enum LabelTypes {  // Enum for label types
+    case timeTableName
+    case day
+    case days
+    case activity
+    case times
+}
+
+//MARK: - Class
+
 class PDFManager: NSObject{
     static let shared = PDFManager()
     var pageWidth = 800
     var pageHeight = 382
     var rects = [CGRect]()
     override init(){}
+    
     //MARK: - Horizontal Template
     
     func showTemplate(arrayWeekDays: [LecturesModel], pageRect: CGRect, context: CGContext){
-        addRow(y: 40, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
-        addColumn(x: 150, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
+        drawLine( x: 150, y: 40, context, pageRect: pageRect, lineDirection: .verticalAndHorizontal)  /// Draws the lines of template
         addWeekName(arrayWeekDays: arrayWeekDays, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 7, context: context)
+        addTimeTableUILabel(title: "TimeTable", x:CGFloat(pageWidth) / 2, y: 200, fontSize: 30, fontWeight: .bold)
+        
     }
     
-    func addRow(y: Int, _ drawContext: CGContext, pageRect: CGRect,
-                tearOffY: CGFloat, numberTabs: Int){
+    //MARK: - Draws Line(s)
+    
+    func drawLine(x: Int,y: Int, _ drawContext: CGContext, pageRect: CGRect , lineDirection : LineDirection){
         drawContext.saveGState()
         drawContext.setLineWidth(2.0)
-        drawContext.move(to: CGPoint(x: 0, y: y))
-        drawContext.addLine(to: CGPoint(x: pageRect.width, y: CGFloat(y)))
+        
+        switch lineDirection {
+        
+        case .horizontal:
+            
+            drawContext.move(to: CGPoint(x: 0, y: y))
+            drawContext.addLine(to: CGPoint(x: pageRect.width, y: CGFloat(y)))
+            
+        case .verticalAndHorizontal:
+            
+            drawContext.move(to: CGPoint(x: x, y: 0))
+            drawContext.addLine(to: CGPoint(x: CGFloat(x) , y: pageRect.height))
+            drawContext.move(to: CGPoint(x: 0, y: y))
+            drawContext.addLine(to: CGPoint(x: pageRect.width, y: CGFloat(y)))
+            
+        case .daysTimeVertical:
+            
+            drawContext.move(to: CGPoint(x: x, y: 0))
+            drawContext.addLine(to: CGPoint(x: CGFloat(x) , y:  CGFloat(y)))
+        }
     }
     
-    func addColumn(x: Int, _ drawContext: CGContext, pageRect: CGRect,
-                   tearOffY: CGFloat, numberTabs: Int){
-        drawContext.saveGState()
-        drawContext.setLineWidth(2.0)
-        drawContext.move(to: CGPoint(x: x, y: 0))
-        drawContext.addLine(to: CGPoint(x: CGFloat(x) , y: pageRect.height))
-    }
+    //MARK: - Draw Week Names
     
     func addWeekName(arrayWeekDays: [LecturesModel], _ drawContext: CGContext, pageRect: CGRect,
                      tearOffY: CGFloat, numberTabs: Int, context: CGContext){
         var estimatedWeekNameY = cellHeight
         for index in 0..<arrayWeekDays.count {
-            _ = addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: CGFloat(estimatedWeekNameY-6))
-            addRow(y: Int(Double(estimatedWeekNameY) + 40.0), context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 9)
+            addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: CGFloat(estimatedWeekNameY-6))
+            drawLine(x: 0, y: Int(Double(estimatedWeekNameY) + 40.0), context, pageRect: pageRect, lineDirection: .horizontal)
             estimatedWeekNameY += cellHeight
         }
         drawContext.restoreGState()
@@ -61,67 +95,84 @@ class PDFManager: NSObject{
         context.strokePath()
         context.restoreGState()
     }
+ 
+    //MARK: SetData
+    func showHeaderTime(arrayHeaderTime: [String], pageRect: CGRect, context: CGContext){
+        addTimeUILabel(title: "Days", x: -19, y: 7)
+        addWeekName(arrayHeaderTime: arrayHeaderTime, context, pageRect: pageRect)
+    }
     
-    func addUILabel(title: String, x: CGFloat, y: CGFloat) -> CGFloat{
-        let titleFont = UIFont.systemFont(ofSize: 18.0, weight: .bold)
+    func addWeekName(arrayHeaderTime: [String], _ drawContext: CGContext,pageRect: CGRect){
+        var estimatedWeekNameX = 150.0
+        for index in 0..<arrayHeaderTime.count {
+            let time1 = convertDateTimeFormatter(date: arrayHeaderTime[index]) /// Converting  time formate from "HH:mm:ss" to "HH:mm a"
+            addTimeUILabel(title: "\(time1)", x: estimatedWeekNameX, y: 7)
+            drawLine(x:  Int(estimatedWeekNameX), y: 40, drawContext, pageRect: pageRect, lineDirection: .daysTimeVertical) // Draws the vrtical lines slices in days row
+            estimatedWeekNameX += 120
+        }
+        drawContext.restoreGState()
+    }
+    
+    func addUILabel(title: String, x: CGFloat, y: CGFloat){
+            let titleFont = UIFont.systemFont(ofSize: 18.0, weight: .bold)
+            let titleAttributes: [NSAttributedString.Key: Any] =
+            [
+                NSAttributedString.Key.font: titleFont
+            ]
+            let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
+            let titleStringSize = attributedTitle.size()
+            let titleStringRect = CGRect(x: x,
+                                         y: CGFloat(y), width: titleStringSize.width,
+                                         height: titleStringSize.height)
+            attributedTitle.draw(in: titleStringRect)
+        }
+    
+    func addTimeTableUILabel(title: String, x: CGFloat, y: CGFloat,fontSize:CGFloat,fontWeight: UIFont.Weight) {
+        let titleFont = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
         let titleAttributes: [NSAttributedString.Key: Any] =
-        [NSAttributedString.Key.font: titleFont]
+        [
+            NSAttributedString.Key.font: titleFont
+        ]
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
         let titleStringSize = attributedTitle.size()
         let titleStringRect = CGRect(x: x,
                                      y: CGFloat(y), width: titleStringSize.width,
                                      height: titleStringSize.height)
         attributedTitle.draw(in: titleStringRect)
-        return titleStringRect.origin.y + titleStringRect.size.height
-    }
-    
-    //MARK: SetData
-    func showHeaderTime(arrayHeaderTime: [String], pageRect: CGRect, context: CGContext){
-        _ = addTimeUILabel(title: "Days", x: -19, y: 7)
-        addWeekName(arrayHeaderTime: arrayHeaderTime, context, pageRect: pageRect)
-    }
-    
-    func addHeaderColumn(x: Int, _ drawContext: CGContext, pageRect: CGRect){
-        drawContext.saveGState()
-        drawContext.setLineWidth(2.0)
-        drawContext.move(to: CGPoint(x: x, y: 0))
-        drawContext.addLine(to: CGPoint(x: CGFloat(x) , y: 40))
-    }
-    
-    func addWeekName(arrayHeaderTime: [String], _ drawContext: CGContext,pageRect: CGRect){
-        var estimatedWeekNameX = 150.0
-        for index in 0..<arrayHeaderTime.count {
-            _ = addTimeUILabel(title: arrayHeaderTime[index], x: estimatedWeekNameX, y: 7)
-            addHeaderColumn(x: Int(estimatedWeekNameX), drawContext, pageRect: pageRect)
-            estimatedWeekNameX += 120
         }
-        drawContext.restoreGState()
-    }
     
-    func addTimeUILabel(title: String, x: CGFloat, y: CGFloat) -> CGFloat {
+    func addTimeUILabel(title: String, x: CGFloat, y: CGFloat){
         let titleFont = UIFont.systemFont(ofSize: 20.0, weight: .regular)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let titleAttributes: [NSAttributedString.Key: Any] =
-        [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.paragraphStyle: paragraphStyle]
+       
+        [
+            NSAttributedString.Key.font: titleFont,
+            NSAttributedString.Key.paragraphStyle: paragraphStyle
+        ]
+        
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
         let titleStringSize = attributedTitle.size()
         let titleStringRect = CGRect(x: x,
                                      y: CGFloat(y), width: 120,
                                      height: titleStringSize.height)
         attributedTitle.draw(in: titleStringRect)
-        return titleStringRect.origin.y + titleStringRect.size.height
     }
     
-    func addRectUILabel(title: String, x: CGFloat, y: CGFloat ,rectWidth: CGFloat,isLecture :Int,context: CGContext) -> CGFloat {
-        let titleFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+    func addRectUILabel(title: String, x: CGFloat, y: CGFloat ,rectWidth: CGFloat,isLecture :Int,context: CGContext){
+        let titleFont = UIFont.systemFont(ofSize: 14.0, weight: .bold)
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let titleAttributes: [NSAttributedString.Key: Any] =
+        
         [
             NSAttributedString.Key.font: titleFont,
-            NSAttributedString.Key.paragraphStyle: paragraphStyle
+            NSAttributedString.Key.paragraphStyle: paragraphStyle,
+            NSAttributedString.Key.foregroundColor : UIColor.white
         ]
+        
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
         
         var titleStringRect = CGRect(x: x,
@@ -165,7 +216,6 @@ class PDFManager: NSObject{
         }
         
         attributedTitle.draw(in: titleStringRect)
-        return titleStringRect.origin.y + titleStringRect.size.height
     }
     
     func addRect(x: CGFloat,y: CGFloat, _ drawContext: CGContext,rectWidth: CGFloat,isLecture :Int) -> CGRect{
@@ -176,9 +226,9 @@ class PDFManager: NSObject{
         var bgColor : UIColor!
         let strokeColor : UIColor = .black
         if isLecture == 2 {
-            bgColor = UIColor(red: 255/255, green: 127/255, blue: 0/255, alpha:0.4)
+            bgColor = UIColor(red: 255/255, green: 127/255, blue: 0/255, alpha:1.0)
         }else {
-         
+            
             bgColor = UIColor(red: 10/255, green: 121/255, blue: 191/255, alpha:1.0)
         }
         let bpath:UIBezierPath = UIBezierPath(rect: titleStringRect)
@@ -192,6 +242,7 @@ class PDFManager: NSObject{
     }
     
     // MARK: - Draw rectangles
+    
     // Number of rectangles in a day
     
     func numOfRect(arrayHeaderTime: [String],schTimesArry:[LecturesModel],context : CGContext) {
@@ -258,7 +309,26 @@ class PDFManager: NSObject{
         return strArray
     }
     
-    
+    //MARK: - Date Time format converter
+      
+      func convertDateTimeFormatter(date: String) -> String {
+          let dateFormatter = DateFormatter()
+          dateFormatter.dateFormat = "HH:mm:ss"    /// Time And Date format from
+          dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone?
+          
+          guard let date = dateFormatter.date(from: date) else {
+              assert(false, "no date from string")
+              return ""
+          }
+          
+          dateFormatter.dateFormat = "HH:mm a"    /// Time and date format to
+          dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone?
+          let timeStamp = dateFormatter.string(from: date)
+          
+          return timeStamp
+      }
+      
+  
     // Drawing the rectangles
     
     func drawRectangles(combineHours: Int, startTime: String,arrayHeaderTime: [String], className: String, y : CGFloat, isLecture : Int , context : CGContext){
@@ -285,5 +355,5 @@ class PDFManager: NSObject{
     func addLecture(rectX: Int, y : CGFloat, rectWidth : CGFloat, isLecture: Int, className: String, context : CGContext ){
         let rect = addRect(x:CGFloat(rectX), y: y, context, rectWidth: rectWidth, isLecture: isLecture)
         self.rects.append(rect)
-        _ = addRectUILabel(title: className, x: CGFloat(rectX), y: y, rectWidth : rectWidth, isLecture : isLecture, context : context)
+        addRectUILabel(title: className, x: CGFloat(rectX), y: y, rectWidth : rectWidth, isLecture : isLecture, context : context)
     }}
