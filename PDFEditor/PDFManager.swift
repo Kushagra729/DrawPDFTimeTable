@@ -16,20 +16,12 @@ let midChar = 14
 
 //MARK: - Enum
 
-
 enum LineDirection {  // Enum for lines directions
     case horizontal
     case verticalAndHorizontal
     case daysTimeVertical
 }
 
-enum LabelTypes {  // Enum for label types
-    case timeTableName
-    case day
-    case days
-    case activity
-    case times
-}
 
 //MARK: - Class
 
@@ -43,9 +35,9 @@ class PDFManager: NSObject{
     //MARK: - Horizontal Template
     
     func showTemplate(arrayWeekDays: [LecturesModel], pageRect: CGRect, context: CGContext){
-        drawLine( x: 150, y: 40, context, pageRect: pageRect, lineDirection: .verticalAndHorizontal)  /// Draws the lines of template
+        drawLine( x: 150, y: 140, context, pageRect: pageRect, lineDirection: .verticalAndHorizontal)  /// Draws the lines of template
         addWeekName(arrayWeekDays: arrayWeekDays, context, pageRect: pageRect, tearOffY: pageRect.height * 4.0 / 5.0, numberTabs: 7, context: context)
-        addTimeTableUILabel(title: "TimeTable", x:CGFloat(pageWidth) / 2, y: 200, fontSize: 30, fontWeight: .bold)
+        addTimeTableUILabel(title: "Time Table", x:0.0, y: 30, fontSize: 30, fontWeight: .bold)
         
     }
     
@@ -64,14 +56,20 @@ class PDFManager: NSObject{
             
         case .verticalAndHorizontal:
             
-            drawContext.move(to: CGPoint(x: x, y: 0))
+            drawContext.move(to: CGPoint(x: 0, y: y - 40))
+            drawContext.addLine(to: CGPoint(x: pageRect.width, y: CGFloat(y - 40)))
+            drawContext.move(to: CGPoint(x: x, y: 100))
             drawContext.addLine(to: CGPoint(x: CGFloat(x) , y: pageRect.height))
             drawContext.move(to: CGPoint(x: 0, y: y))
             drawContext.addLine(to: CGPoint(x: pageRect.width, y: CGFloat(y)))
+            drawContext.move(to: CGPoint(x: 1, y: 100))
+            drawContext.addLine(to: CGPoint(x: CGFloat(1) , y: pageRect.height))
+            drawContext.move(to: CGPoint(x: pageRect.width - 1, y: 100))
+            drawContext.addLine(to: CGPoint(x: pageRect.width - 1 , y: pageRect.height))
             
         case .daysTimeVertical:
             
-            drawContext.move(to: CGPoint(x: x, y: 0))
+            drawContext.move(to: CGPoint(x: x, y: y - 40))
             drawContext.addLine(to: CGPoint(x: CGFloat(x) , y:  CGFloat(y)))
         }
     }
@@ -82,8 +80,8 @@ class PDFManager: NSObject{
                      tearOffY: CGFloat, numberTabs: Int, context: CGContext){
         var estimatedWeekNameY = cellHeight
         for index in 0..<arrayWeekDays.count {
-            addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: CGFloat(estimatedWeekNameY-6))
-            drawLine(x: 0, y: Int(Double(estimatedWeekNameY) + 40.0), context, pageRect: pageRect, lineDirection: .horizontal)
+            addUILabel(title: arrayWeekDays[index].day ?? "", x: 20, y: CGFloat(estimatedWeekNameY-6) + 96)
+            drawLine(x: 0, y: Int(Double(estimatedWeekNameY) + 140.0), context, pageRect: pageRect, lineDirection: .horizontal)
             estimatedWeekNameY += cellHeight
         }
         drawContext.restoreGState()
@@ -98,7 +96,7 @@ class PDFManager: NSObject{
  
     //MARK: SetData
     func showHeaderTime(arrayHeaderTime: [String], pageRect: CGRect, context: CGContext){
-        addTimeUILabel(title: "Days", x: -19, y: 7)
+        addTimeUILabel(title: "Days", x: -19, y: 107)
         addWeekName(arrayHeaderTime: arrayHeaderTime, context, pageRect: pageRect)
     }
     
@@ -106,8 +104,8 @@ class PDFManager: NSObject{
         var estimatedWeekNameX = 150.0
         for index in 0..<arrayHeaderTime.count {
             let time1 = convertDateTimeFormatter(date: arrayHeaderTime[index]) /// Converting  time formate from "HH:mm:ss" to "HH:mm a"
-            addTimeUILabel(title: "\(time1)", x: estimatedWeekNameX, y: 7)
-            drawLine(x:  Int(estimatedWeekNameX), y: 40, drawContext, pageRect: pageRect, lineDirection: .daysTimeVertical) // Draws the vrtical lines slices in days row
+            addTimeUILabel(title: "\(time1)", x: estimatedWeekNameX, y: 107)
+            drawLine(x:  Int(estimatedWeekNameX), y: 140, drawContext, pageRect: pageRect, lineDirection: .daysTimeVertical) // Draws the vrtical lines slices in days row
             estimatedWeekNameX += 120
         }
         drawContext.restoreGState()
@@ -129,14 +127,17 @@ class PDFManager: NSObject{
     
     func addTimeTableUILabel(title: String, x: CGFloat, y: CGFloat,fontSize:CGFloat,fontWeight: UIFont.Weight) {
         let titleFont = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
         let titleAttributes: [NSAttributedString.Key: Any] =
         [
-            NSAttributedString.Key.font: titleFont
+            NSAttributedString.Key.font: titleFont,
+            NSAttributedString.Key.paragraphStyle: paragraphStyle
         ]
         let attributedTitle = NSAttributedString(string: title, attributes: titleAttributes)
         let titleStringSize = attributedTitle.size()
         let titleStringRect = CGRect(x: x,
-                                     y: CGFloat(y), width: titleStringSize.width,
+                                     y: CGFloat(y), width: CGFloat(pageWidth),
                                      height: titleStringSize.height)
         attributedTitle.draw(in: titleStringRect)
         }
@@ -218,6 +219,8 @@ class PDFManager: NSObject{
         attributedTitle.draw(in: titleStringRect)
     }
     
+    // Draw Rectangle
+    
     func addRect(x: CGFloat,y: CGFloat, _ drawContext: CGContext,rectWidth: CGFloat,isLecture :Int) -> CGRect{
         let titleStringRect = CGRect(x: x,
                                      y: CGFloat(y - 20), width: rectWidth,
@@ -265,7 +268,7 @@ class PDFManager: NSObject{
                     print(combineHours)
                     if let activityName = _activity.activity_name {
                         
-                        drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: CGFloat(y), isLecture: _activity.activity_type ?? 1, context: context)
+                        drawRectangles(combineHours: combineHours, startTime: startTime, arrayHeaderTime: arrayHeaderTime, className: _activity.activity_name ?? "", y: CGFloat(y) + 100.0, isLecture: _activity.activity_type ?? 1, context: context)
                         
                     }else {
                         
@@ -321,7 +324,7 @@ class PDFManager: NSObject{
               return ""
           }
           
-          dateFormatter.dateFormat = "HH:mm a"    /// Time and date format to
+          dateFormatter.dateFormat = "hh:mm a"    /// Time and date format to
           dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone?
           let timeStamp = dateFormatter.string(from: date)
           
@@ -352,8 +355,11 @@ class PDFManager: NSObject{
         }
     }
     
+    //Add Activity Rectangles with labels
+    
     func addLecture(rectX: Int, y : CGFloat, rectWidth : CGFloat, isLecture: Int, className: String, context : CGContext ){
         let rect = addRect(x:CGFloat(rectX), y: y, context, rectWidth: rectWidth, isLecture: isLecture)
         self.rects.append(rect)
         addRectUILabel(title: className, x: CGFloat(rectX), y: y, rectWidth : rectWidth, isLecture : isLecture, context : context)
-    }}
+    }
+}

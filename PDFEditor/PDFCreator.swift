@@ -25,8 +25,9 @@ class PDFCreator: NSObject {
                 let time2 = timeformatter.date(from:  pdfeditor.timing?.end ?? "")
                 let timeArray = PDFManager()._timeRange(from: time1 ?? Date(), to: time2 ?? Date())
                 PDFManager.shared.pageWidth = 150 + (timeArray.count * 120)
-                PDFManager.shared.pageHeight = 60 + (lecturesArray.count * (cellHeight-4))
+                PDFManager.shared.pageHeight = 160 + (lecturesArray.count * (cellHeight-4))
                 let pageRect = CGRect(x: 0, y: 0, width: PDFManager.shared.pageWidth, height: PDFManager.shared.pageHeight)
+
                 let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: format)
                 let data = renderer.pdfData { (context) in
                     context.beginPage()
